@@ -6,19 +6,39 @@ const newman = require('newman');
 const pool = require('../src/config/database');
 const createApp = require('../src/app');
 
+async function verifyDatabaseConnection() {
+  try {
+    await pool.query('SELECT 1');
+    console.log('Koneksi ke basis data PostgreSQL lokal terverifikasi.');
+  } catch (err) {
+    console.error('\n[DATABASE CONNECTION ERROR]');
+    console.error('Tidak dapat terhubung ke server PostgreSQL lokal.');
+    console.error(`Host: ${process.env.PGHOST || 'localhost'}, Port: ${process.env.PGPORT || 5432}, User: ${process.env.PGUSER || 'postgres'}, Database: ${process.env.PGDATABASE || 'openjob_db'}`);
+    console.error('Pastikan PostgreSQL telah berjalan secara lokal dan kredensial pada berkas .env sudah sesuai.');
+    console.error(`Detail error: ${err.message}\n`);
+    throw err;
+  }
+}
+
 async function cleanDatabase() {
-  console.log('Cleaning database tables for clean test run...');
+  console.log('Membersihkan tabel basis data untuk pengujian...');
   await pool.query(
     'TRUNCATE TABLE authentications, bookmarks, applications, jobs, categories, companies, users CASCADE'
   );
-  console.log('Database tables truncated successfully.');
+  console.log('Tabel basis data berhasil dibersihkan.');
 }
 
 async function runTests() {
+  try {
+    await verifyDatabaseConnection();
+  } catch (err) {
+    process.exit(1);
+  }
+
   const app = createApp();
   const port = process.env.PORT || 3000;
   const server = app.listen(port, async () => {
-    console.log(`Test server running on port ${port}`);
+    console.log(`Server pengujian berjalan pada port ${port}`);
 
     try {
       await cleanDatabase();
@@ -26,7 +46,7 @@ async function runTests() {
       const collectionPath = path.resolve('Postman/[271] OpenJob API Test V1.postman_collection.json');
       const environmentPath = path.resolve('Postman/OpenJob API.postman_environment.json');
 
-      console.log('Starting Newman test runner...');
+      console.log('Memulai runner Newman...');
       newman.run(
         {
           collection: collectionPath,
@@ -39,31 +59,31 @@ async function runTests() {
           await pool.end();
 
           if (err) {
-            console.error('Newman run encountered an error:', err);
+            console.error('Newman mengalami error eksekusi:', err);
             process.exit(1);
           }
 
           const stats = summary.run.stats;
           console.log('\n=============================================');
-          console.log('            TEST RUN SUMMARY');
+          console.log('            RINGKASAN HASIL PENGUJIAN');
           console.log('=============================================');
-          console.log(`Requests:   Total: ${stats.requests.total}, Failed: ${stats.requests.failed}`);
-          console.log(`Assertions: Total: ${stats.assertions.total}, Failed: ${stats.assertions.failed}`);
+          console.log(`Requests:   Total: ${stats.requests.total}, Gagal: ${stats.requests.failed}`);
+          console.log(`Assertions: Total: ${stats.assertions.total}, Gagal: ${stats.assertions.failed}`);
 
           if (summary.run.failures.length > 0) {
-            console.log('\n--- FAILURES ---');
+            console.log('\n--- DAFTAR KEGAGALAN ---');
             summary.run.failures.forEach((f, idx) => {
               console.log(`${idx + 1}. [${f.source.name}] ${f.error.test}: ${f.error.message}`);
             });
             process.exit(1);
           } else {
-            console.log('\nALL TESTS PASSED SUCCESSFULLY! (100% PASS RATE)');
+            console.log('\nSELURUH PENGUJIAN BERHASIL LULUS! (100% PASS RATE)');
             process.exit(0);
           }
         }
       );
     } catch (dbErr) {
-      console.error('Database setup failed:', dbErr);
+      console.error('Pengaturan basis data gagal:', dbErr);
       server.close();
       await pool.end();
       process.exit(1);
