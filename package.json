@@ -1,0 +1,36 @@
+{
+  "name": "openjob-api",
+  "version": "1.0.0",
+  "description": "OpenJob RESTful API Versi 1 - Dicoding Submission",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "start:dev": "nodemon src/server.js",
+    "migrate": "node-pg-migrate --envPath .env",
+    "migrate:up": "node-pg-migrate --envPath .env up",
+    "migrate:down": "node-pg-migrate --envPath .env down",
+    "test": "node tests/run-postman.js"
+  },
+  "keywords": [
+    "express",
+    "postgresql",
+    "dicoding",
+    "openjob"
+  ],
+  "author": "distania_9",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^3.3.8",
+    "node-pg-migrate": "^7.9.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "newman": "^6.2.3",
+    "nodemon": "^3.1.9"
+  }
+}
