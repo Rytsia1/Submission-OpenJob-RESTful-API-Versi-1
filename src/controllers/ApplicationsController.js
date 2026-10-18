@@ -1,9 +1,8 @@
 // dikerjakan oleh: distania_9
 
 class ApplicationsController {
-  constructor(applicationsService, validator) {
+  constructor(applicationsService) {
     this._applicationsService = applicationsService;
-    this._validator = validator;
 
     this.postApplicationHandler = this.postApplicationHandler.bind(this);
     this.getApplicationsHandler = this.getApplicationsHandler.bind(this);
@@ -16,7 +15,6 @@ class ApplicationsController {
 
   async postApplicationHandler(req, res, next) {
     try {
-      this._validator.validatePostApplicationPayload(req.body);
       const applicationId = await this._applicationsService.addApplication(req.body);
 
       return res.status(201).json({
@@ -93,7 +91,6 @@ class ApplicationsController {
 
   async putApplicationStatusHandler(req, res, next) {
     try {
-      this._validator.validatePutApplicationPayload(req.body);
       const { id } = req.params;
       await this._applicationsService.editApplicationStatusById(id, req.body);
 

@@ -1,9 +1,8 @@
 // dikerjakan oleh: distania_9
 
 class CategoriesController {
-  constructor(categoriesService, validator) {
+  constructor(categoriesService) {
     this._categoriesService = categoriesService;
-    this._validator = validator;
 
     this.postCategoryHandler = this.postCategoryHandler.bind(this);
     this.getCategoriesHandler = this.getCategoriesHandler.bind(this);
@@ -14,7 +13,6 @@ class CategoriesController {
 
   async postCategoryHandler(req, res, next) {
     try {
-      this._validator.validateCategoryPayload(req.body);
       const categoryId = await this._categoriesService.addCategory(req.body);
 
       return res.status(201).json({
@@ -59,7 +57,6 @@ class CategoriesController {
 
   async putCategoryByIdHandler(req, res, next) {
     try {
-      this._validator.validateCategoryPayload(req.body);
       const { id } = req.params;
       await this._categoriesService.editCategoryById(id, req.body);
 

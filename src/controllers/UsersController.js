@@ -1,9 +1,8 @@
 // dikerjakan oleh: distania_9
 
 class UsersController {
-  constructor(usersService, validator) {
+  constructor(usersService) {
     this._usersService = usersService;
-    this._validator = validator;
 
     this.postUserHandler = this.postUserHandler.bind(this);
     this.getUserByIdHandler = this.getUserByIdHandler.bind(this);
@@ -11,7 +10,6 @@ class UsersController {
 
   async postUserHandler(req, res, next) {
     try {
-      this._validator.validateUserPayload(req.body);
       const userId = await this._usersService.addUser(req.body);
 
       return res.status(201).json({

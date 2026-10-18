@@ -10,14 +10,6 @@ const errorHandler = require('./middlewares/errorHandler');
 // Token Manager
 const TokenManager = require('./tokenize/TokenManager');
 
-// Validators
-const UsersValidator = require('./validator/users');
-const AuthenticationsValidator = require('./validator/authentications');
-const CompaniesValidator = require('./validator/companies');
-const CategoriesValidator = require('./validator/categories');
-const JobsValidator = require('./validator/jobs');
-const ApplicationsValidator = require('./validator/applications');
-
 // Services
 const UsersService = require('./services/UsersService');
 const AuthenticationsService = require('./services/AuthenticationsService');
@@ -62,17 +54,16 @@ const createApp = () => {
   const bookmarksService = new BookmarksService();
 
   // Instantiate Controllers
-  const usersController = new UsersController(usersService, UsersValidator);
+  const usersController = new UsersController(usersService);
   const authenticationsController = new AuthenticationsController(
     authenticationsService,
     usersService,
-    TokenManager,
-    AuthenticationsValidator
+    TokenManager
   );
-  const companiesController = new CompaniesController(companiesService, CompaniesValidator);
-  const categoriesController = new CategoriesController(categoriesService, CategoriesValidator);
-  const jobsController = new JobsController(jobsService, JobsValidator);
-  const applicationsController = new ApplicationsController(applicationsService, ApplicationsValidator);
+  const companiesController = new CompaniesController(companiesService);
+  const categoriesController = new CategoriesController(categoriesService);
+  const jobsController = new JobsController(jobsService);
+  const applicationsController = new ApplicationsController(applicationsService);
   const bookmarksController = new BookmarksController(bookmarksService);
   const profilesController = new ProfilesController(usersService, applicationsService, bookmarksService);
 

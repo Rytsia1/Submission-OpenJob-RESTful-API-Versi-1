@@ -1,11 +1,10 @@
 // dikerjakan oleh: distania_9
 
 class AuthenticationsController {
-  constructor(authenticationsService, usersService, tokenManager, validator) {
+  constructor(authenticationsService, usersService, tokenManager) {
     this._authenticationsService = authenticationsService;
     this._usersService = usersService;
     this._tokenManager = tokenManager;
-    this._validator = validator;
 
     this.postAuthenticationHandler = this.postAuthenticationHandler.bind(this);
     this.putAuthenticationHandler = this.putAuthenticationHandler.bind(this);
@@ -14,8 +13,6 @@ class AuthenticationsController {
 
   async postAuthenticationHandler(req, res, next) {
     try {
-      this._validator.validatePostAuthenticationPayload(req.body);
-
       const { email, password } = req.body;
       const user = await this._usersService.verifyUserCredential(email, password);
 
@@ -46,8 +43,6 @@ class AuthenticationsController {
 
   async putAuthenticationHandler(req, res, next) {
     try {
-      this._validator.validatePutAuthenticationPayload(req.body);
-
       const { refreshToken } = req.body;
 
       // Verify signature first (throws InvariantError if invalid)
@@ -79,8 +74,6 @@ class AuthenticationsController {
 
   async deleteAuthenticationHandler(req, res, next) {
     try {
-      this._validator.validateDeleteAuthenticationPayload(req.body);
-
       const { refreshToken } = req.body;
 
       // Verify signature first (throws InvariantError if invalid)

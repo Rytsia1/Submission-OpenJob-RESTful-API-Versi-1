@@ -1,9 +1,8 @@
 // dikerjakan oleh: distania_9
 
 class JobsController {
-  constructor(jobsService, validator) {
+  constructor(jobsService) {
     this._jobsService = jobsService;
-    this._validator = validator;
 
     this.postJobHandler = this.postJobHandler.bind(this);
     this.getJobsHandler = this.getJobsHandler.bind(this);
@@ -16,7 +15,6 @@ class JobsController {
 
   async postJobHandler(req, res, next) {
     try {
-      this._validator.validateJobPayload(req.body);
       const jobId = await this._jobsService.addJob(req.body);
 
       return res.status(201).json({
@@ -96,7 +94,6 @@ class JobsController {
 
   async putJobByIdHandler(req, res, next) {
     try {
-      this._validator.validateJobPayload(req.body);
       const { id } = req.params;
       await this._jobsService.editJobById(id, req.body);
 

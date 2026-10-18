@@ -1,9 +1,8 @@
 // dikerjakan oleh: distania_9
 
 class CompaniesController {
-  constructor(companiesService, validator) {
+  constructor(companiesService) {
     this._companiesService = companiesService;
-    this._validator = validator;
 
     this.postCompanyHandler = this.postCompanyHandler.bind(this);
     this.getCompaniesHandler = this.getCompaniesHandler.bind(this);
@@ -14,7 +13,6 @@ class CompaniesController {
 
   async postCompanyHandler(req, res, next) {
     try {
-      this._validator.validateCompanyPayload(req.body);
       const companyId = await this._companiesService.addCompany(req.body);
 
       return res.status(201).json({
@@ -59,7 +57,6 @@ class CompaniesController {
 
   async putCompanyByIdHandler(req, res, next) {
     try {
-      this._validator.validateCompanyPayload(req.body);
       const { id } = req.params;
       await this._companiesService.editCompanyById(id, req.body);
 

@@ -2,16 +2,18 @@
 
 const express = require('express');
 const authMiddleware = require('../middlewares/authMiddleware');
+const validateMiddleware = require('../middlewares/validateMiddleware');
+const { JobPayloadSchema } = require('../validator/jobs/schema');
 
 const createJobsRouter = (jobsController, bookmarksController) => {
   const router = express.Router();
 
-  router.post('/', authMiddleware, jobsController.postJobHandler);
+  router.post('/', authMiddleware, validateMiddleware(JobPayloadSchema), jobsController.postJobHandler);
   router.get('/', jobsController.getJobsHandler);
   router.get('/company/:companyId', jobsController.getJobsByCompanyIdHandler);
   router.get('/category/:categoryId', jobsController.getJobsByCategoryIdHandler);
   router.get('/:id', jobsController.getJobByIdHandler);
-  router.put('/:id', authMiddleware, jobsController.putJobByIdHandler);
+  router.put('/:id', authMiddleware, validateMiddleware(JobPayloadSchema), jobsController.putJobByIdHandler);
   router.delete('/:id', authMiddleware, jobsController.deleteJobByIdHandler);
 
   // Bookmark nested routes under /jobs
