@@ -1,7 +1,7 @@
 // dikerjakan oleh: distania_9
 
-require('dotenv').config();
 const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const newman = require('newman');
 const pool = require('../src/config/database');
 const createApp = require('../src/app');
@@ -43,8 +43,8 @@ async function runTests() {
     try {
       await cleanDatabase();
 
-      const collectionPath = path.resolve('Postman/[271] OpenJob API Test V1.postman_collection.json');
-      const environmentPath = path.resolve('Postman/OpenJob API.postman_environment.json');
+      const collectionPath = path.resolve(__dirname, '../Postman/[271] OpenJob API Test V1.postman_collection.json');
+      const environmentPath = path.resolve(__dirname, '../Postman/OpenJob API.postman_environment.json');
 
       console.log('Memulai runner Newman...');
       newman.run(
