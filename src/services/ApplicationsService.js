@@ -4,6 +4,7 @@ const { nanoid } = require('nanoid');
 const pool = require('../config/database');
 const InvariantError = require('../exceptions/InvariantError');
 const NotFoundError = require('../exceptions/NotFoundError');
+const AuthorizationError = require('../exceptions/AuthorizationError');
 
 class ApplicationsService {
   constructor() {
@@ -29,6 +30,20 @@ class ApplicationsService {
     const result = await this._pool.query(query);
     if (result.rows.length === 0) {
       throw new NotFoundError('Job tidak ditemukan');
+    }
+  }
+
+  async verifyApplicationOwner(id, userId) {
+    const query = {
+      text: 'SELECT user_id FROM applications WHERE id = $1',
+      values: [id],
+    };
+    const result = await this._pool.query(query);
+    if (result.rows.length === 0) {
+      throw new NotFoundError('Aplikasi tidak ditemukan');
+    }
+    if (result.rows[0].user_id !== userId) {
+      throw new AuthorizationError('Anda tidak berhak mengakses aplikasi ini');
     }
   }
 

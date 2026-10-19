@@ -92,6 +92,7 @@ class ApplicationsController {
   async putApplicationStatusHandler(req, res, next) {
     try {
       const { id } = req.params;
+      await this._applicationsService.verifyApplicationOwner(id, req.user.id);
       await this._applicationsService.editApplicationStatusById(id, req.body);
 
       return res.status(200).json({
@@ -106,6 +107,7 @@ class ApplicationsController {
   async deleteApplicationHandler(req, res, next) {
     try {
       const { id } = req.params;
+      await this._applicationsService.verifyApplicationOwner(id, req.user.id);
       await this._applicationsService.deleteApplicationById(id);
 
       return res.status(200).json({
